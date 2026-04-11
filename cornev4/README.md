@@ -1,85 +1,107 @@
-# corne_emi — Corne v4.1 Keymap (Anti-EMI + VIAL)
+# Corne v4.1 — `cornev4` Keymap (Anti-EMI + VIAL)
 
-Keymap personalizado para el **Corne v4.1 foostan** con controlador **RP2040**.
+Custom keymap for the **Corne v4.1 foostan** with **RP2040** controller.
 
-Incluye optimizaciones anti-EMI por software y soporte completo de [vial.rocks](https://vial.rocks).
+Includes software anti-EMI optimizations and full [vial.rocks](https://vial.rocks) browser support.
 
-## Layout
+---
 
-| Capa | Descripción |
-|------|-------------|
-| 0    | QWERTY base — ESC/PGUP/PGDN en extras |
-| 1    | Números (1-0 en dos filas), símbolos, navegación |
-| 2    | F1-F12, VIM nav (HJKL+UI), Home/End, screenshot |
-| 3    | RGB (toggle desde L2 con TG3) + QK_BOOT |
-| 4-5  | Transparentes — libres para personalizar |
+## Layers
 
-### Thumbs
+| Layer | Description |
+|-------|-------------|
+| 0 | QWERTY base — ESC/PGUP/PGDN on extra inner keys |
+| 1 | Numbers (1–0 across two rows), symbols, arrow navigation |
+| 2 | F1–F12, VIM-style nav (H/J/K/L + U/I), Home/End, screenshot |
+| 3 | RGB control + `QK_BOOT` — toggle from Layer 2 with `TG(3)` |
+| 4–5 | Transparent — free to customize via vial.rocks |
+
+### Thumb cluster
+
 ```
-Izquierda:  LGUI │ MO(1) │ SPACE
-Derecha:    RALT │ MO(2) │ RCTRL
+Left:   LGUI │ MO(1) │ SPACE
+Right:  RALT │ MO(2) │ RCTRL
 ```
-En layer 1 el thumb derecho cambia a: `ENTER │ MO(2) │ RGUI`
 
-## Optimizaciones Anti-EMI
+On layer 1 the right thumb changes to: `ENTER │ MO(2) │ RGUI`
 
-| Parámetro | Valor | Efecto |
-|-----------|-------|--------|
-| `DEBOUNCE_TYPE` | `sym_defer_g` | Filtra pulsos EMI de < 8ms |
-| `DEBOUNCE` | 8ms | Absorbe el pulso típico de cables TRRS |
-| `SERIAL_USART_SPEED` | 460800 | Doble período de bit → más inmune a ruido |
-| `SPLIT_USB_DETECT` | activado | Evita confusión de handedness por EMI en arranque |
-| `SPLIT_WATCHDOG_TIMEOUT` | 3000ms | Auto-reset si la mitad esclava se congestiona |
-| `MATRIX_IO_DELAY` | 30µs | Estabilización eléctrica tras eventos EMI |
-| `RGB_MATRIX_FRAMERATE` | 20 Hz | Reduce switching noise de los LEDs |
+---
 
-## Compilar el firmware
+## Anti-EMI Optimizations
 
-### Requisitos previos
+| Setting | Value | Effect |
+|---------|-------|--------|
+| `DEBOUNCE_TYPE` | `sym_defer_g` | Filters EMI pulses shorter than 8 ms |
+| `DEBOUNCE` | `8` ms | Absorbs typical TRRS cable noise spikes |
+| `SERIAL_USART_SPEED` | `460800` | Doubles bit period → more noise-immune |
+| `SPLIT_USB_DETECT` | enabled | Prevents handedness confusion on boot |
+| `SPLIT_WATCHDOG_TIMEOUT` | `3000` ms | Auto-resets if slave half freezes |
+| `MATRIX_IO_DELAY` | `30` µs | Electrical settling after EMI events |
+| `RGB_MATRIX_FRAMERATE` | `20` Hz | Reduces LED switching noise |
+
+---
+
+## Flashing the firmware (.uf2)
+
+### Method 1 — Bootloader key combo (no physical button needed)
+
+Hold the key while plugging in the USB cable to that half:
+
+| Half to flash | Hold this key while connecting USB |
+|---------------|-------------------------------------|
+| **Left half** | **P** |
+| **Right half** | **Q** |
+
+The drive `RPI-RP2` will appear. Drag the `.uf2` onto it — done.
+
+### Method 2 — `QK_BOOT` keycode (keyboard connected and working)
+
+Go to **Layer 3** (hold MO2 from L2, then TG3) and press `QK_BOOT`.
+The half will reboot into bootloader and `RPI-RP2` will appear.
+
+### Method 3 — Physical reset button (if accessible on the PCB)
+
+Double-click the RESET button on the RP2040 board quickly.
+
+---
+
+## Configure with vial.rocks (no compile needed)
+
+1. Open **[vial.rocks](https://vial.rocks)** in Chrome or Edge
+2. Click **"Connect"** — your browser shows a native WebHID device picker
+3. Select your Corne from the list
+4. Keymap editing is available immediately in the browser
+
+> **VIAL security unlock:** if vial.rocks shows a lock icon, hold **Q + W** simultaneously until it unlocks. This is a VIAL feature to prevent accidental remapping — it is **not** related to flashing.
+
+---
+
+## Build from source
+
+### Prerequisites
 
 ```bash
-# 1. Instalar QMK CLI
+# Install QMK CLI
 python3 -m pip install --user qmk
 
-# 2. Clonar el fork VIAL de QMK (necesario para soporte VIAL/vial.rocks)
+# Clone vial-qmk (required for vial.rocks support)
 git clone https://github.com/vial-kb/vial-qmk.git ~/qmk_firmware
 cd ~/qmk_firmware
 git submodule update --init --recursive
-
-# 3. Configurar QMK para que use este directorio
 qmk config user.qmk_home=~/qmk_firmware
 ```
 
-### Instalar el keymap
+### Install the keymap
 
 ```bash
-# Copiar la carpeta del keymap al lugar correcto dentro de QMK
-cp -r crkbd/keymaps/corne_emi ~/qmk_firmware/keyboards/crkbd/keymaps/
+mkdir -p ~/qmk_firmware/keyboards/crkbd/keymaps/cornev4
+cp -r cornev4/* ~/qmk_firmware/keyboards/crkbd/keymaps/cornev4/
 ```
 
-### Compilar
+### Compile
 
 ```bash
 cd ~/qmk_firmware
-qmk compile -kb crkbd/rev4_1/standard -km corne_emi
+qmk compile -kb crkbd/rev4_1/standard -km cornev4
+# Output: crkbd_rev4_1_standard_cornev4.uf2
 ```
-
-El archivo resultante se llamará:
-```
-crkbd_rev4_1_standard_corne_emi.uf2
-```
-
-### Flashear
-
-1. Conectar la mitad **izquierda** al PC
-2. Hacer **doble-click rápido** en el botón reset del RP2040
-3. Aparecerá un disco USB llamado `RPI-RP2`
-4. Arrastrar el `.uf2` al disco → se flashea y reinicia solo
-5. Repetir con la mitad **derecha**
-
-### Configurar desde vial.rocks
-
-1. Abrir [https://vial.rocks](https://vial.rocks) en Chrome o Edge
-2. Conectar el teclado
-3. Pulsar "Authorize device" → seleccionar "Corne v4.1"
-4. Para desbloquear edición: mantener **Q + W** mientras conectas
