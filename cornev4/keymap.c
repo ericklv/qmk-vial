@@ -46,22 +46,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┐
    * │  `   │  1   │  2   │  3   │  4   │  5   │ LCTL │   │ RCTL │  6   │  7   │  8   │  9   │  0   │ BSPC │
    * ├──────┼──────┼──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┼──────┼──────┤
-   * │ LCTL │  6   │  7   │  8   │  9   │  0   │ LALT │   │ RALT │ LEFT │ DOWN │  UP  │ RGHT │  `   │  =   │
-   * ├──────┼──────┼──────┼──────┼──────┼──────┘       └──┼──────┼──────┼──────┼──────┼──────┼──────┤
-   * │ LSFT │  Z   │  X   │ LEFT │ RGHT │  B   │           │  N   │ TRNS │  ,   │  .   │  \   │  -   │
-   * └──────┴──────┴──────┼──────┼──────┼──────┤           ├──────┼──────┼──────┼──────┴──────┴──────┘
-   *                       │ LGUI │ MO1  │ SPC  │           │ ENT  │ MO2  │ RGUI │
-   *                       └──────┴──────┴──────┘           └──────┴──────┴──────┘
+   * │ PGUP │  6   │  7   │  8   │  9   │  0   │ LALT │   │ RALT │ LEFT │ DOWN │  UP  │ RGHT │  `   │  =   │
+   * ├──────┼──────┼──────┼──────┼──────┼──────┼──────┘   └──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+   * │ PGDN │  Z   │  X   │ LEFT │ RGHT │  M   │                 │  [   │  ]   │  ,   │  .   │  \   │  -   │
+   * └──────┴──────┴──────┼──────┼──────┼──────┤                 ├──────┼──────┼──────┼──────┴──────┴──────┘
+   *                       │ LGUI │ MO1  │ SPC  │                 │ ENT  │ MO2  │ RCTL │
+   *                       └──────┴──────┴──────┘                 └──────┴──────┴──────┘
    */
   [1] = LAYOUT_split_3x6_3_ex2(
     KC_GRV,   KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_LCTL,
     KC_RCTL,  KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
-    KC_LCTL,  KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_LALT,
+    KC_PGUP,  KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_LALT,
     KC_RALT,  KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_GRV,  KC_EQL,
-    KC_LSFT,  KC_Z,    KC_X,    KC_LEFT, KC_RGHT, KC_B,
-              KC_N,    KC_TRNS, KC_COMM, KC_DOT,  KC_BSLS, KC_MINS,
+    KC_PGDN,  KC_Z,    KC_X,    KC_LEFT, KC_RGHT, KC_M,
+              KC_LBRC, KC_RBRC, KC_COMM, KC_DOT,  KC_BSLS, KC_MINS,
     KC_LGUI,  MO(1),   KC_SPC,
-    KC_ENT,   MO(2),   KC_RGUI
+    KC_ENT,   MO(2),   KC_RCTL
   ),
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -70,21 +70,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┐
    * │ TRNS │  F1  │  F2  │  F3  │  F4  │  F5  │ F11  │   │ F12  │  F6  │  F7  │  F8  │  F9  │ F10  │ PSCR │
    * ├──────┼──────┼──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┼──────┼──────┤
-   * │ TRNS │ LEFT │ DOWN │  UP  │ RGHT │ TRNS │ TRNS │   │ TRNS │ TRNS │  U   │ LEFT │  I   │ TRNS │  DEL │
-   * ├──────┼──────┼──────┼──────┼──────┼──────┘       └──┼──────┼──────┼──────┼──────┼──────┼──────┤
-   * │ TG3  │ TRNS │ BSPC │ TRNS │ TRNS │ SLEP │           │ TRNS │  J   │ RGHT │  K   │ END  │ HOME │
-   * └──────┴──────┴──────┼──────┼──────┼──────┤           ├──────┼──────┼──────┼──────┴──────┴──────┘
-   *                       │CA(0) │CA(0) │ MO0  │           │ ENT  │ TRNS │ TRNS │
-   *                       └──────┴──────┴──────┘           └──────┴──────┴──────┘
+   * │ CAPS │ LEFT │ DOWN │  UP  │ RGHT │ TRNS │ TRNS │   │ TRNS │ TRNS │  U   │ LEFT │  I   │ F11  │  DEL │
+   * ├──────┼──────┼──────┼──────┼──────┼──────┼──────┘   └──────┼──────┼──────┼──────┼──────┼──────┼──────┤
+   * │ TG3  │ TRNS │ BSPC │ TRNS │ TRNS │ SLEP │                 │ F12  │  J   │ RGHT │  K   │ END  │ HOME │
+   * └──────┴──────┴──────┼──────┼──────┼──────┤                 ├──────┼──────┼──────┼──────┴──────┴──────┘
+   *                       │ A(LC)│C(RA) │ MO0  │                 │ ENT  │ TRNS │ TRNS │
+   *                       └──────┴──────┴──────┘                 └──────┴──────┴──────┘
    */
   [2] = LAYOUT_split_3x6_3_ex2(
     KC_TRNS,        KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F11,
     KC_F12,         KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_PSCR,
-    KC_TRNS,        KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_TRNS, KC_TRNS,
-    KC_TRNS,        KC_TRNS, KC_U,    KC_LEFT, KC_I,    KC_TRNS, KC_DEL,
+    KC_CAPS,        KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_TRNS, KC_TRNS,
+    KC_TRNS,        KC_TRNS, KC_U,    KC_LEFT, KC_I,    KC_F11,  KC_DEL,
     TG(3),          KC_TRNS, KC_BSPC, KC_TRNS, KC_TRNS, KC_SLEP,
-                    KC_TRNS, KC_J,    KC_RGHT, KC_K,    KC_END,  KC_HOME,
-    RCTL(KC_RALT),  RCTL(KC_RALT), MO(0),
+                    KC_F12,  KC_J,    KC_RGHT, KC_K,    KC_END,  KC_HOME,
+    LALT(KC_LCTL),  RCTL(KC_RALT), MO(0),
     KC_ENT,         KC_TRNS, KC_TRNS
   ),
 
