@@ -13,15 +13,28 @@ All keymaps are compatible with **[vial.rocks](https://vial.rocks)** — live ke
 
 ---
 
-## First-time Setup
+## Build
 
-### 1. Install QMK CLI
+### GitHub Actions
+
+No local toolchain or `vial-qmk` clone required. [`.github/workflows/build.yml`](.github/workflows/build.yml) builds both keyboards inside the `ghcr.io/qmk/qmk_cli` container against `vial-kb/vial-qmk@vial`.
+
+| Trigger | Output |
+|---------|--------|
+| Push to `main`, PR, manual (`workflow_dispatch`) | `.uf2` per keyboard as workflow artifacts (Actions → run → *Artifacts*) |
+| Tag `v*` (e.g. `git tag v1.0 && git push --tags`) | GitHub Release with both `.uf2` attached |
+
+To build from a fork: fork the repo, edit the keymap, push — or run it manually from the *Actions* tab.
+
+### Local build
+
+#### 1. Install QMK CLI
 
 ```bash
 python3 -m pip install --user qmk
 ```
 
-### 2. Clone vial-qmk (VIAL fork of QMK)
+#### 2. Clone vial-qmk (VIAL fork of QMK)
 
 ```bash
 git clone https://github.com/vial-kb/vial-qmk.git ~/qmk_firmware
@@ -30,7 +43,7 @@ git submodule update --init --recursive
 qmk config user.qmk_home=~/qmk_firmware
 ```
 
-### 3. Clone this repo and copy the keymaps
+#### 3. Clone this repo and copy the keymaps
 
 ```bash
 git clone git@github.com:ericklv/qmk-vial.git ~/qmk-vial
@@ -44,11 +57,9 @@ mkdir -p ~/qmk_firmware/keyboards/lily58/keymaps/lily58pro
 cp -r ~/qmk-vial/lily58pro/* ~/qmk_firmware/keyboards/lily58/keymaps/lily58pro/
 ```
 
----
+#### 4. Compile
 
-## Compile
-
-### Corne v4.1
+##### Corne v4.1
 
 ```bash
 cd ~/qmk_firmware
@@ -56,7 +67,7 @@ qmk compile -kb crkbd/rev4_1/standard -km cornev4
 # Output: crkbd_rev4_1_standard_cornev4.uf2
 ```
 
-### Lily58 Pro R2G
+##### Lily58 Pro R2G
 
 ```bash
 cd ~/qmk_firmware
@@ -66,14 +77,14 @@ qmk compile -kb lily58/r2g -km lily58pro -e CONVERT_TO=promicro_rp2040
 
 ---
 
-## Flash (RP2040 — both keyboards)
+## Flash UF2 (RP2040 — both keyboards)
 
 1. Double-click the **RESET** button on the keyboard half
 2. A USB drive named **`RPI-RP2`** will appear
 3. Drag the `.uf2` file onto the drive — it flashes and reboots automatically
 4. Repeat for the **other half**
 
-> Pre-compiled `.uf2` files are included in each keyboard folder so you can flash immediately without building.
+> The committed `.uf2` files are outdated. Use GitHub Actions artifacts or releases for the latest firmware.
 
 ---
 
@@ -95,3 +106,5 @@ qmk compile -kb lily58/r2g -km lily58pro -e CONVERT_TO=promicro_rp2040
 | 2 | F-keys + VIM nav (hold MO2) |
 | 3 | RGB control + QK_BOOT (toggle from L2) |
 | 4–5 | Free / transparent |
+
+Full diagrams for layers 0–2: [`cornev4/corne_layout.md`](cornev4/corne_layout.md).
