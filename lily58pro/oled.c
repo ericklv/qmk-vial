@@ -46,10 +46,14 @@ static void draw_text(int16_t x, int16_t y, const char *s, uint8_t scale, bool i
 
 /* ─────────────────────────────── Left: WPM + layer ─────────────────────────────── */
 
-#define WPM_SAMPLES 22   // 2 px per sample, right of the WPM readout
+#define WPM_SAMPLES 21   // 2 px per sample, right of the WPM readout
 #define WPM_GRAPH_X 84
 #define WPM_SAMPLE_MS 500
 #define WPM_MAX 120
+
+// Burn-in guard: the whole left screen drifts by a pixel every few minutes
+#define SHIFT_MS 300000
+static const int8_t shift_xy[][2] = {{0, 0}, {1, 0}, {2, 0}, {2, 1}, {1, 1}, {0, 1}};
 
 static uint8_t  wpm_hist[WPM_SAMPLES];
 static uint8_t  wpm_head;
@@ -67,22 +71,25 @@ static void render_master(void) {
     oled_clear();
 
     // Top half (2x): "WPM 087" + scrolling history graph, oldest on the left
-    draw_text(0, 0, "WPM", 2, false);
-    draw_text(42, 0, get_u8_str(wpm, '0'), 2, false);
+    const int8_t *o  = shift_xy[(timer_read32() / SHIFT_MS) % (sizeof(shift_xy) / sizeof(shift_xy[0]))];
+    int8_t        ox = o[0], oy = o[1];
+
+    draw_text(ox, oy, "WPM", 2, false);
+    draw_text(ox + 42, oy, get_u8_str(wpm, '0'), 2, false);
     for (uint8_t i = 0; i < WPM_SAMPLES; i++) {
         uint8_t v = wpm_hist[(wpm_head + i) % WPM_SAMPLES];
         uint8_t h = (v > WPM_MAX ? WPM_MAX : v) * 14 / WPM_MAX;
         if (v && !h) h = 1;
-        fill_rect(WPM_GRAPH_X + i * 2, 15 - h, 1, h, true);
+        fill_rect(ox + WPM_GRAPH_X + i * 2, oy + 15 - h, 1, h, true);
     }
 
     // Bottom half (2x): active layer name + caps indicator
     static const char *const names[] = {"BASE", "NUM", "FN", "ADJ"};
     uint8_t                  layer   = get_highest_layer(layer_state);
-    draw_text(0, 16, layer < 4 ? names[layer] : "L?", 2, false);
+    draw_text(ox, oy + 16, layer < 4 ? names[layer] : "L?", 2, false);
     if (host_keyboard_led_state().caps_lock) {
-        fill_rect(78, 16, 50, 16, true);
-        draw_text(80, 16, "CAPS", 2, true);
+        fill_rect(ox + 76, oy + 16, 50, 16, true);
+        draw_text(ox + 78, oy + 16, "CAPS", 2, true);
     }
 }
 

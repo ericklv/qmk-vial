@@ -48,8 +48,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define TAPPING_TERM 100
 
-// Reduce OLED brightness (0 to 255)
-#define OLED_BRIGHTNESS 120
+// Dim the OLEDs to reduce burn-in. Contrast alone barely changes perceived
+// brightness on SSD1306 panels, so also shorten pre-charge and lower VCOMH.
+#define OLED_BRIGHTNESS 24        // contrast, 0-255 (QMK default 255)
+#define OLED_PRE_CHARGE_PERIOD 0x22 // default 0xF1
+#define OLED_VCOM_DETECT 0x00       // ~0.65 x Vcc, default 0x20
 
 // Enable all 30+ RGB Matrix Effects
 #define ENABLE_RGB_MATRIX_ANIMATIONS

@@ -9,7 +9,26 @@ All keymaps are compatible with **[vial.rocks](https://vial.rocks)** — live ke
 | Folder | Keyboard | Controller | Notes |
 |--------|----------|------------|-------|
 | [`cornev4/`](cornev4/) | Corne v4.1 (foostan) | RP2040 | Anti-EMI + VIAL + 6 layers |
-| [`lily58pro/`](lily58pro/) | Lily58 Pro R2G | RP2040 | VIAL + 40+ RGB animations |
+| [`lily58pro/`](lily58pro/) | Lily58 Pro R2G | RP2040 | VIAL + 40+ RGB animations + custom OLEDs |
+
+---
+
+## Lily58 OLEDs
+
+[`lily58pro/oled.c`](lily58pro/oled.c), 128×32 per half. Previews are rendered by running the firmware's `oled.c` in a PC simulator (top: left/master, bottom: right/slave).
+
+| v1 — 1× text, layer chips | v2 — 2× text, active layer only |
+|:-:|:-:|
+| ![v1](lily58pro/firmware/v1/oled_preview.gif) | ![v2](lily58pro/firmware/v2/oled_preview.gif) |
+
+- **Left:** WPM, WPM history graph, active layer, Caps Lock.
+- **Right:** Clawd. Types on a laptop while WPM > 0 (`SPLIT_WPM_ENABLE`), wanders when idle, sleeps after 15 s without input.
+- **Burn-in protection:**
+  - Contrast `OLED_BRIGHTNESS 24`, `OLED_PRE_CHARGE_PERIOD 0x22`, `OLED_VCOM_DETECT 0x00` ([`config.h`](lily58pro/config.h)).
+  - Left screen drifts 1–2 px every 5 min (6 positions).
+  - Both screens off after 60 s idle (`OLED_TIMEOUT`, synced via `SPLIT_ACTIVITY_ENABLE`).
+
+Builds per version (`.uf2` + preview): [`lily58pro/firmware/`](lily58pro/firmware/).
 
 ---
 
