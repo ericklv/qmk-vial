@@ -23,21 +23,27 @@ Left:   LGUI │ MO(1) │ SPACE
 Right:  RALT │ MO(2) │ RCTRL
 ```
 
-On layer 1 the right thumb changes to: `ENTER │ MO(2) │ RGUI`
+On layer 1 the right thumb changes to: `ENTER │ MO(2) │ RCTRL`
 
 ---
 
 ## Anti-EMI Optimizations
 
+rev4_1 hardware: direct-pin matrix (one GPIO per key, RP2040 internal pull-ups), single-wire half-duplex split on GP12 (TRS or TRRS), VBUS sense on GP13.
+
 | Setting | Value | Effect |
 |---------|-------|--------|
-| `DEBOUNCE_TYPE` | `sym_defer_g` | Filters EMI pulses shorter than 8 ms |
-| `DEBOUNCE` | `8` ms | Absorbs typical TRRS cable noise spikes |
-| `SERIAL_USART_SPEED` | `460800` | Doubles bit period → more noise-immune |
-| `SPLIT_USB_DETECT` | enabled | Prevents handedness confusion on boot |
-| `SPLIT_WATCHDOG_TIMEOUT` | `3000` ms | Auto-resets if slave half freezes |
-| `MATRIX_IO_DELAY` | `30` µs | Electrical settling after EMI events |
-| `RGB_MATRIX_FRAMERATE` | `20` Hz | Reduces LED switching noise |
+| `DEBOUNCE_TYPE` | `sym_defer_pk` | Per-key deferred debounce: a noisy key never delays the others |
+| `DEBOUNCE` | `8` ms | Change reported only after 8 ms stable (default 5) |
+| `SERIAL_USART_SPEED` | `115200` | Half the QMK default (230400) → 2× bit period, more noise-immune |
+| Master detection | VBUS pin (GP13) | Hardware detection; `SPLIT_USB_DETECT` intentionally not defined |
+| `SPLIT_WATCHDOG_TIMEOUT` | `3000` ms | Boot-time: slave resets if it gets no ping from the master within 3 s |
+| `RGB_MATRIX_LED_FLUSH_LIMIT` | `33` ms | LED refresh ~30 fps (default ~60) → fewer LED data bursts |
+
+- RGB max brightness: 120/255 (vial-qmk `crkbd` default). Lower `RGB_MATRIX_MAXIMUM_BRIGHTNESS` to cut more noise.
+- Hardware: the single data wire carries all split traffic — use a short, shielded TRS/TRRS cable; never hot-plug it.
+
+Versioned builds: [`firmware/`](firmware/).
 
 ---
 
@@ -45,12 +51,12 @@ On layer 1 the right thumb changes to: `ENTER │ MO(2) │ RGUI`
 
 ### Method 1 — Bootloader key combo (no physical button needed)
 
-Hold the key while plugging in the USB cable to that half:
+Hold the key while plugging in the USB cable to that half (bootmagic — also resets EEPROM: Vial keymap/RGB revert to firmware defaults):
 
 | Half to flash | Hold this key while connecting USB |
 |---------------|-------------------------------------|
-| **Left half** | **P** |
-| **Right half** | **Q** |
+| **Left half** | **Q** |
+| **Right half** | **P** |
 
 The drive `RPI-RP2` will appear. Drag the `.uf2` onto it — done.
 
@@ -72,7 +78,7 @@ Double-click the RESET button on the RP2040 board quickly.
 3. Select your Corne from the list
 4. Keymap editing is available immediately in the browser
 
-> **VIAL security unlock:** if vial.rocks shows a lock icon, hold **Q + W** simultaneously until it unlocks. This is a VIAL feature to prevent accidental remapping — it is **not** related to flashing.
+> **VIAL security unlock:** if vial.rocks shows a lock icon, hold **Q + P** simultaneously until it unlocks. This is a VIAL feature to prevent accidental remapping — it is **not** related to flashing.
 
 ---
 

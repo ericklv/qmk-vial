@@ -103,7 +103,7 @@ qmk compile -kb lily58/r2g -km lily58pro -e CONVERT_TO=promicro_rp2040
 3. Drag the `.uf2` file onto the drive — it flashes and reboots automatically
 4. Repeat for the **other half**
 
-> Lily58 builds are versioned in [`lily58pro/firmware/`](lily58pro/firmware/) (`.uf2` + OLED preview per version). The Corne `.uf2` is outdated; use GitHub Actions artifacts or releases.
+> Lily58 builds are versioned in [`lily58pro/firmware/`](lily58pro/firmware/) (`.uf2` + OLED preview per version). Corne builds: [`cornev4/firmware/`](cornev4/firmware/).
 
 ---
 
