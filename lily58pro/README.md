@@ -12,7 +12,7 @@ Full [vial.rocks](https://vial.rocks) browser support with 40+ RGB Matrix animat
 - **VialRGB** — full RGB Matrix animation library accessible from the browser
 - **OLED** ([`oled.c`](oled.c)) — left: WPM + history graph, Caps Lock, active layer. Right: Clawd (Claude Code mascot) types on a laptop while you type, wanders when idle, sleeps after 15 s
 
-  ![OLED preview](oled_preview.gif)
+  ![OLED preview](firmware/v2/oled_preview.gif)
 - **Manufacturer label**: `FOSS Keyboard` (shown in the About section of VIAL)
 
 ---
@@ -28,7 +28,7 @@ The Lily58 Pro R2G has a **physical RESET button** on each half's PCB.
 3. Drag the `.uf2` file onto the drive — it flashes and reboots automatically
 4. Repeat for the **other half**
 
-> Flash each half **separately** with the same `.uf2` file.
+> Flash each half **separately** with the same `.uf2` file. Versioned builds (each with its OLED preview): [`firmware/`](firmware/).
 
 ---
 

@@ -1,5 +1,5 @@
 // Lily58 Pro R2G — OLED screens (128x32)
-//   Left  (master): WPM + history graph on top, active layer on the bottom row
+//   Left  (master): WPM + history graph on top, active layer + caps below (2x text)
 //   Right (slave):  Clawd, the Claude Code mascot — types on a laptop while
 //                   you type, wanders around when idle, sleeps after a while
 // SPDX-License-Identifier: GPL-2.0-or-later
@@ -33,9 +33,21 @@ static void draw_bitmap(const uint16_t *rows, uint8_t h, uint8_t w, int16_t x, i
             if (rows[r] & (1u << (w - 1 - c))) fill_rect(x + c * s, y + r * s, s, s, true);
 }
 
+// Text at any pixel position and integer scale, using the OLED's own 6x8 font
+extern const unsigned char font[];
+
+static void draw_text(int16_t x, int16_t y, const char *s, uint8_t scale, bool invert) {
+    for (; *s; s++, x += 6 * scale)
+        for (uint8_t c = 0; c < 6; c++) {
+            uint8_t bits = pgm_read_byte(&font[(uint8_t)*s * 6 + c]);
+            for (uint8_t r = 0; r < 8; r++) fill_rect(x + c * scale, y + r * scale, scale, scale, ((bits >> r) & 1) != invert);
+        }
+}
+
 /* ─────────────────────────────── Left: WPM + layer ─────────────────────────────── */
 
-#define WPM_SAMPLES 64   // 2 px per sample -> full width
+#define WPM_SAMPLES 22   // 2 px per sample, right of the WPM readout
+#define WPM_GRAPH_X 84
 #define WPM_SAMPLE_MS 500
 #define WPM_MAX 120
 
@@ -54,30 +66,23 @@ static void render_master(void) {
 
     oled_clear();
 
-    // Row 0: "WPM 087" + caps indicator
-    oled_set_cursor(0, 0);
-    oled_write_P(PSTR("WPM "), false);
-    oled_write(get_u8_str(wpm, '0'), false);
-    if (host_keyboard_led_state().caps_lock) {
-        oled_set_cursor(17, 0);
-        oled_write_P(PSTR("CAPS"), true);
-    }
-
-    // Rows 9..22: scrolling WPM history, oldest on the left
+    // Top half (2x): "WPM 087" + scrolling history graph, oldest on the left
+    draw_text(0, 0, "WPM", 2, false);
+    draw_text(42, 0, get_u8_str(wpm, '0'), 2, false);
     for (uint8_t i = 0; i < WPM_SAMPLES; i++) {
         uint8_t v = wpm_hist[(wpm_head + i) % WPM_SAMPLES];
         uint8_t h = (v > WPM_MAX ? WPM_MAX : v) * 14 / WPM_MAX;
         if (v && !h) h = 1;
-        fill_rect(i * 2, 23 - h, 1, h, true);
+        fill_rect(WPM_GRAPH_X + i * 2, 15 - h, 1, h, true);
     }
 
-    // Row 3: layer chips, active one inverted
-    static const char PROGMEM names[][6] = {" BASE", " NUM ", " FN ", " ADJ "};
-    static const uint8_t      cols[]     = {0, 6, 11, 16};
-    uint8_t                   layer      = get_highest_layer(layer_state);
-    for (uint8_t i = 0; i < 4; i++) {
-        oled_set_cursor(cols[i], 3);
-        oled_write_P(names[i], layer == i);
+    // Bottom half (2x): active layer name + caps indicator
+    static const char *const names[] = {"BASE", "NUM", "FN", "ADJ"};
+    uint8_t                  layer   = get_highest_layer(layer_state);
+    draw_text(0, 16, layer < 4 ? names[layer] : "L?", 2, false);
+    if (host_keyboard_led_state().caps_lock) {
+        fill_rect(78, 16, 50, 16, true);
+        draw_text(80, 16, "CAPS", 2, true);
     }
 }
 
@@ -192,13 +197,8 @@ static void draw_spinner_text(void) {
     uint16_t rows[7];
     uint8_t  f = spinner_seq[(clawd.tick / 2) % sizeof(spinner_seq)];
     copy_rows(rows, spinner[f], 7);
-    draw_bitmap(rows, 7, 7, 74, 8, 1);
-
-    oled_set_cursor(14, 1);
-    oled_write_P(verbs[(clawd.tick / 40) % (sizeof(verbs) / sizeof(verbs[0]))], false);
-    oled_set_cursor(14, 2);
-    oled_write(get_u8_str(get_current_wpm(), ' '), false);
-    oled_write_P(PSTR(" wpm"), false);
+    draw_bitmap(rows, 7, 7, 76, 12, 1);
+    draw_text(86, 12, verbs[(clawd.tick / 40) % (sizeof(verbs) / sizeof(verbs[0]))], 1, false);
 }
 
 static void draw_zzz(int16_t x) {
