@@ -15,7 +15,6 @@
   */
 
 #include QMK_KEYBOARD_H
-#include <stdio.h>
 
 enum layer_number {
   _QWERTY = 0,
@@ -140,72 +139,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 )
 };
 
-#ifdef OLED_ENABLE
-
-oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-  if (!is_keyboard_master())
-    return OLED_ROTATION_180;  // flips the display 180 degrees if offhand
-  return rotation;
-}
-
+// Tri-layer: hold LOWER + RAISE -> ADJUST
 layer_state_t layer_state_set_user(layer_state_t state) {
-    state = update_tri_layer_state(state, _RAISE, _LOWER, _ADJUST);
-    return state;
+    return update_tri_layer_state(state, _RAISE, _LOWER, _ADJUST);
 }
 
-
-
-char keylog_str[24] = {};
-char keylogs_str[21] = {};
-int keylogs_str_idx = 0;
-
-char wpm[4];
-char layer_misc[7];
-
-const char code_to_name[60] = {
-    ' ', ' ', ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f',
-    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-    'R', 'E', 'B', 'T', '_', '-', '=', '[', ']', '\\',
-    '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '};
-
-void set_keylog(uint16_t keycode, keyrecord_t *record) {
-  char name = ' ';
-  if (keycode < 60) {
-    name = code_to_name[keycode];
-  }
-
-  // update keylog
-  snprintf(keylog_str, sizeof(keylog_str), "%dx%d, k%2d : %c",
-           record->event.key.row, record->event.key.col,
-           keycode, name);
-
-  // update keylogs
-  if (keylogs_str_idx == sizeof(keylogs_str) - 1) {
-    keylogs_str_idx = 0;
-    for (int i = 0; i < sizeof(keylogs_str) - 1; i++) {
-      keylogs_str[i] = ' ';
-    }
-  }
-
-  keylogs_str[keylogs_str_idx] = name;
-  keylogs_str_idx++;
-}
-
-const char *read_keylog(void) {
-  return keylog_str;
-}
-
-const char *read_keylogs(void) {
-  return keylogs_str;
-}
-
-
-
-bool oled_task_user(void) {
-  return true; // Delegate all OLED tasks to r2g.c so the factory r2g logo and state displays
-}
-
-#endif // OLED_ENABLE
-
+// OLED screens live in oled.c

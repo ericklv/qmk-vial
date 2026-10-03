@@ -54,3 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Enable all 30+ RGB Matrix Effects
 #define ENABLE_RGB_MATRIX_ANIMATIONS
 #define ENABLE_RGB_MATRIX_KEYPRESS
+
+// OLED: sync WPM so the right half can animate while typing,
+// and sync activity so both screens sleep/wake together
+#define SPLIT_WPM_ENABLE
+#define SPLIT_ACTIVITY_ENABLE

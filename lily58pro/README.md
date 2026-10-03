@@ -10,7 +10,9 @@ Full [vial.rocks](https://vial.rocks) browser support with 40+ RGB Matrix animat
 
 - **VIAL** — live keymap editing from [vial.rocks](https://vial.rocks), no software install needed
 - **VialRGB** — full RGB Matrix animation library accessible from the browser
-- **OLED** — native R2G logo displayed on both screens
+- **OLED** ([`oled.c`](oled.c)) — left: WPM + history graph, Caps Lock, active layer. Right: Clawd (Claude Code mascot) types on a laptop while you type, wanders when idle, sleeps after 15 s
+
+  ![OLED preview](oled_preview.gif)
 - **Manufacturer label**: `FOSS Keyboard` (shown in the About section of VIAL)
 
 ---

@@ -18,3 +18,6 @@ QMK_SETTINGS = no
 LTO_ENABLE = yes
 
 KEY_OVERRIDE_ENABLE = no
+
+# OLED screens (WPM/layer on the left, Clawd animation on the right)
+SRC += oled.c
